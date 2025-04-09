@@ -1,7 +1,7 @@
 import requests
 
 # Replace with the IPv4 address of the server container
-server_url = "http://192.168.1.2:5000"  # Assuming the server container is named ipv4_server
+server_url = "http://172.20.0.10:5000"  # Assuming the server container is named ipv4_server
 
 try:
     response = requests.get(server_url)

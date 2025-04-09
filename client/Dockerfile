@@ -1,5 +1,5 @@
 # Use an official Python runtime as a base image
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Install necessary packages
 RUN pip install requests

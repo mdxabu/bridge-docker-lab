@@ -1,0 +1,37 @@
+services:
+  ipv4_server:
+    build: ./server  # Path to the server directory with Dockerfile.server
+    container_name: ipv4_server
+    ports:
+      - "5000:5000"  # Expose port 5000 for the server
+    networks:
+      ipv4net:
+        ipv4_address: 172.20.0.10  # Static IPv4 address for the server
+
+  ipv6_client:
+    build: ./client  # Path to the client directory with Dockerfile.client
+    container_name: ipv6_client
+    networks:
+      ipv6net:
+        ipv6_address: "2001:db8::20"  # Static IPv6 address for the client
+
+networks:
+  ipv4net:
+    driver: bridge
+    enable_ipv6: false
+    enable_ipv4: true  # Enable IPv4 for this network
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.25.0.0/16"   # Updated subnet
+          gateway: "172.25.0.1"
+
+  ipv6net:
+    driver: bridge
+    enable_ipv6: true 
+    enable_ipv4: false  # Disable IPv4 for this network
+    ipam:
+      driver: default
+      config:
+        - subnet: "2001:db8::/64"
+          gateway: "2001:db8::1"
