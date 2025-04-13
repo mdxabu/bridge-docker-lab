@@ -1,27 +1,37 @@
-services:
-  ipv4-server:
-    container_name: ipv4-server
-    build:
-      context: ./ipv4-server
-      dockerfile: Dockerfile
-    networks:
-      - ipv4-net
-    command: ["/server"]
+version: "3.8"
 
+services:
   ipv6-client:
+    build: ./ipv6-client
     container_name: ipv6-client
-    build:
-      context: ./ipv6-client
-      dockerfile: Dockerfile
+    volumes:
+      - ./bridge-sync:/bridge   # Shared volume
     networks:
-      - ipv6-net
-    entrypoint: ["/entrypoint.sh"]
+      ipv6_net:
+        ipv6_address: "fd42:4242:4242::10"
+    tty: true
+
+
+
+  ipv4-server:
+    build: ./ipv4-server
+    container_name: ipv4-server
+    networks:
+      ipv4_net:
+        ipv4_address: "192.0.2.10"
+    tty: true
 
 networks:
-  ipv4-net:
-    external: true
-    name: ipv4_net
+  ipv6_net:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "fd42:4242:4242::/64"
 
-  ipv6-net:
-    external: true
-    name: ipv6_net
+  ipv4_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.0.2.0/24"
+

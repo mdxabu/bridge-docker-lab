@@ -1,27 +1,23 @@
 package main
 
 import (
-    "fmt"
-    "net"
-    "os"
+	"fmt"
+	"net"
 )
 
 func main() {
-    addr := ":8080"
-    ln, err := net.Listen("tcp4", addr)
-    if err != nil {
-        fmt.Println("Listen error:", err)
-        os.Exit(1)
-    }
-    fmt.Println("IPv4 Server listening on", addr)
-    for {
-        conn, err := ln.Accept()
-        if err != nil {
-            fmt.Println("Accept error:", err)
-            continue
-        }
-        fmt.Println("Connection from:", conn.RemoteAddr())
-        conn.Write([]byte("Hello from IPv4 server!\n"))
-        conn.Close()
-    }
+	addr := net.UDPAddr{
+		Port: 9090,
+		IP:   net.ParseIP("0.0.0.0"),
+	}
+	conn, err := net.ListenUDP("udp", &addr)
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	buf := make([]byte, 1024)
+	for {
+		n, remote, _ := conn.ReadFromUDP(buf)
+		fmt.Printf("[server] Received: %s from %s\n", string(buf[:n]), remote)
+	}
 }
